@@ -4,7 +4,7 @@ from django.urls import path
 
 router = routers.SimpleRouter()
 
-router.register(r'car', CarsViewSet, basename='cars')
+router.register(r'cars', CarsViewSet, basename='cars')
 
 urlpatterns = [
     *router.urls,]
