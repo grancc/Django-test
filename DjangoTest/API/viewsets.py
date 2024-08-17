@@ -9,19 +9,6 @@ from .models import Cars
 from django.db.models import Q
 
 
-def checkInt(number):
-    try:
-        print(number)
-        if number  != None and number != "":
-            return int(number)
-        else:
-            return None
-
-    except ValueError:
-        return JsonResponse({'error': 'Год, цена, пробег должна быть числами'}, status=status.HTTP_400_BAD_REQUEST)
-
-
-
 class CarsViewSet(ViewSet):
     serializer_class = CarsSerializer
     permission_classes = (AllowAny, )
@@ -87,33 +74,50 @@ class CarsViewSet(ViewSet):
             if model:
                 filter &= Q(model=model)
 
-            if year:
+            if year and int(year) > 0:
                 filter &= Q(year=int(year))
+            else: 
+                raise ValueError
 
-            if year_from:
+            if year_from and int(year_from) > 0:
                 filter &= Q(year__gte=int(year_from))
+            else: 
+                raise ValueError
 
-            if year_to:
+            if year_to and int(year_to)>0:
                 filter &= Q(year__lte=int(year_to))
+            else: 
+                raise ValueError
 
-            if mileage:
+            if mileage and int(mileage) >= 0:
                 filter &= Q(mileage=int(mileage))
+            else: 
+                raise ValueError
 
-            if mileage_min:
+            if mileage_min and int(mileage_min)>=0:
                 filter &= Q(mileage__gte=int(mileage_min))
+            else: 
+                raise ValueError
             
-            if mileage_max:
+            if mileage_max and int(mileage_max)>=0:
                 filter &= Q(mileage__lte=int(mileage_max))
+            else: 
+                raise ValueError
 
-            if price:
+            if price and int(price)>0:
                 filter &= Q(price=int(price))
+            else: 
+                raise ValueError
 
-            if price_min:
-                print(price_min)
+            if price_min and int(price)>0:
                 filter &= Q(price__gte=int(price_min))
+            else: 
+                raise ValueError
 
-            if price_max:
+            if price_max and int(price)>0:
                 filter &= Q(price__lte=int(price_max))
+            else: 
+                raise ValueError
 
 
             offset = (page - 1) * onPageCount
@@ -126,5 +130,5 @@ class CarsViewSet(ViewSet):
             return Response({"cars": serialized_data})
         
         except ValueError:
-            return JsonResponse({'error': 'Год, цена, пробег должны быть числами'}, status=status.HTTP_400_BAD_REQUEST)
+            return JsonResponse({'error': 'Год, цена, должны быть числами больше нуля. Пробег должен быть числом большим, либо равным нулю'}, status=status.HTTP_400_BAD_REQUEST)
 

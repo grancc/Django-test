@@ -47,4 +47,18 @@ class CarsSerializer(serializers.ModelSerializer):
             }
         }
 
+    def validate_price(self, value):
+        if value < 0:
+            raise serializers.ValidationError("Цена не может быть отрицательной")
+        return value
+    
+
+    def validate_mileage(self, value):
+        if value < 0:
+            raise serializers.ValidationError("Пробег не может быть отрицательным")
+        return value
+
+    def create(self, validated_data):
+        return Cars.objects.create(**validated_data)
+
     
